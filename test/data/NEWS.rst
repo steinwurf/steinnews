@@ -1,0 +1,72 @@
+News for rely
+=============
+
+This file lists the major changes between versions. For a more detailed list of
+every change, see the Git log.
+
+Latest
+------
+* Major: Make resolved symlinks relative
+* Patch: Improve the titles in the benchmark plots
+* Minor: Added ``set_timeout`` and ``catch_up`` functions to encoder and
+  decoder. This allows changing the timeout after ``configure``.
+* Minor: Added/updated API to reset and iterate through the different
+  performance counters.
+* Major: Change the meaning of the --mtu option when running the Rely
+  application in TUN mode.
+* Minor: Support logfile output when running Rely application in TUN mode.
+* Major: Update chunkie dependency.
+* Major: Update bitter dependency.
+* Major: Update recycle dependency.
+* Major: Update endian dependency.
+* Major: Update kodo-slide dependency.
+* Minor: Updated Rely application to use flush and optionally flush_repair.
+* Minor: Add documentation on content aware encoding with Rely.
+* Minor: Add documentation on Rely's packet loss protection approach.
+* Patch: Fix issue where encoder::flush_repair() would generate too many repair
+  symbols for a given repair rate.
+* Minor: Added a number of additional performance counters.
+* Major: Remove the `symbols_encoded()`, `symbols_decoded()`, `symbols_dropped()`
+  etc. in favor of performance counters.
+* Minor: Adding performance counters for monitoring performance.
+* Major: Update to Rely Evaluation License 1.2, and
+  Rely Research License 1.2.
+
+3.0.2
+-----
+* Patch: Fix issue with TCP in tun application.
+
+3.0.1
+-----
+* Patch: Fix hello world example.
+
+3.0.0
+-----
+* Minor: Added encoder::flush_repair() function for flushing repair symbols
+  manually. Doing so force the encoder to satisfy the repair requirements all
+  source symbols currently in the stream.
+* Minor: Added encoder::stream_size() and decoder::stream_size() which exposes
+  the number of packets currently in the stream.
+* Minor: Added simple hello_world example.
+* Major: Changed `packet_bytes` to `max_packet_bytes`.
+* Major: Changed `packets_dropped` to `symbols_dropped`.
+* Major: Changed `packets_decoded` to `symbols_decoded`.
+* Minor: Added encoder stats which exposes `repair_symbols_encoded`,
+  `source_symbols_encoded`, and `symbols_encoded`.
+* Patch: Fixed a bug which caused the decoder to throw away useful data, making
+  it far less effective.
+
+2.0.0
+-----
+* Major: Added support for variable symbol length.
+* Major: Re-wrote API to support timeout and decouple it from IO.
+* Major: Update license to Evaluation License Version 1.2.
+* Minor: Added CMake support.
+
+1.0.1
+-----
+* Patch: Actually the initial release.
+
+1.0.0
+-----
+* Major: Initial release.
