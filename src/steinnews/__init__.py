@@ -8,14 +8,27 @@ def write_next_version(file_in, file_out):
         content = file.read()
 
 
-    latest_sections = re.split(r'\d\.\d\.\d\n-+', content, flags = re.M)[0]
+    sections_result = re.split(r'\d+\.\d+\.\d+\n-+', content, flags = re.M)
+    latest_section = sections_result[0] if sections_result else content
+
 
     #order in the 'or' clause is important - higher order comes first
-    levelstr = re.fullmatch(r'.*(Major:|Minor:|Patch:).*', latest_sections, flags = re.M|re.DOTALL)[1]
+    level_match_result = re.search(r'.*?(Major:)|.*?(Minor:)|.*?(Patch:)', latest_section, flags = re.M|re.DOTALL)
+
+    if not level_match_result:
+        print('New changes was not found.')
+        with open(file_out, 'w') as file:
+            file.write(content)
+        return
 
 
-    old_version = re.findall(r'(\d)\.(\d)\.(\d)\n-+', content, flags = re.M)[0] 
-    
+
+    levelstr = level_match_result[1]
+
+    old_version_result = re.findall(r'(\d+)\.(\d+)\.(\d+)\n-+', content, flags = re.M)
+    old_version = old_version_result[0] if old_version_result else '0.0.0'
+
+
     #bump version
     version = {
         'Major:': old_version[0],
