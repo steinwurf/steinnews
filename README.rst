@@ -7,12 +7,12 @@ Helper library to ease news.rst writing
 Usages
 --------------------------------
 
-Import the module. There is (atm) only a single function called:
+Import the module. There is (atm) only a single function named::
 
     write_next_version(file_in, file_out)
 
 This takes an input file and an output file (that does not have to exist yet). These 2 files **can** be the same.
-For example you would call it with a NEWS.rst file:
+For example, if you would call it with a 'NEWS.rst' file you cond::
     
     write_next_version('NEWS.rst', 'NEWS.rst')
 
