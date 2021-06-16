@@ -6,7 +6,7 @@ import click
 import sys
 import colorama
 
-from __init__ import write_next_version
+from . import write_next_version
 
 
 @click.command()
@@ -26,6 +26,3 @@ def cli(input_file, output_file, verbose):
         print(colorama.Fore.RED + str(e))
         sys.exit(1)
 
-
-#if __name__ == "__main__":
-#    cli()
