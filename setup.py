@@ -86,9 +86,6 @@ setup(
         "Topic :: Software Development :: Documentation",
         "Topic :: Utilities",
     ],
-    entry_points={
-        "console_scripts": ["steinnews=steinnews.__main__:cli"],
-    },
     keywords=("steinnews"),
     packages=["steinnews"],
     # How to include data in a package? We use the approach
