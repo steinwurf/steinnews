@@ -117,5 +117,6 @@ def _pytest(bld, venv):
     # Main test command
     venv.run(f"python -B -m pytest {test_filter} --basetemp {basetemp}")
 
+    venv.run("python -m pip install twine")
     # Check the package
     venv.run(f"twine check {wheel}")
