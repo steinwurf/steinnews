@@ -6,7 +6,14 @@ def write_next_version(file_in, file_out):
     # Read in the file
     with open(file_in, "r") as file:
         content = file.read()
+    output = generate_next_version(content)
 
+    # Write the file out again
+    with open(file_out, "w") as file:
+        file.write(output)
+
+
+def generate_next_version(content):
     sections_result = re.split(r"\d+\.\d+\.\d+\n-+", content, flags=re.M)
     latest_section = sections_result[0] if sections_result else content
 
@@ -16,10 +23,8 @@ def write_next_version(file_in, file_out):
     )
 
     if not level_match_result:
-        print("New changes was not found.")
-        with open(file_out, "w") as file:
-            file.write(content)
-        return
+        print("No changes found.")
+        return content
 
     levelstr = level_match_result[1]
 
@@ -47,13 +52,9 @@ def write_next_version(file_in, file_out):
     )
 
     # Replace in the target text to write new version
-    output = re.sub(
+    return re.sub(
         r"(Latest\n-+\n)",
-        r"\1* tbd\n\n" + new_version_str + "\n-------\n",
+        r"\1* tbd\n\n" + new_version_str + "\n" + ("-" * len(new_version_str)) + "\n",
         content,
         flags=re.M,
     )
-
-    # Write the file out again
-    with open(file_out, "w") as file:
-        file.write(output)

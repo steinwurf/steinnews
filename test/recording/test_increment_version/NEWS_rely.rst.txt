@@ -9,7 +9,7 @@ Latest
 * tbd
 
 4.0.0
--------
+-----
 * Major: Make resolved symlinks relative
 * Patch: Improve the titles in the benchmark plots
 * Minor: Added ``set_timeout`` and ``catch_up`` functions to encoder and

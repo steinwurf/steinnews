@@ -9,7 +9,7 @@ Latest
 * tbd
 
 6.0.0
--------
+-----
 * Patch: Recurse dependencies of dependencies before the dependency.
 * Major: Change the default interpreter to python3
 * Patch: Fix resolve such that it won't run twice when invoked explicitly.
