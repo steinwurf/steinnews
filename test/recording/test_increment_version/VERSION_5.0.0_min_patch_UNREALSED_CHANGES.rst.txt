@@ -8,10 +8,9 @@ Latest
 ------
 * tbd
 
-6.0.0
+5.1.0
 -----
 * Patch: Recurse dependencies of dependencies before the dependency.
-* Major: Change the default interpreter to python3
 * Patch: Fix resolve such that it won't run twice when invoked explicitly.
 * Minor: Allow resolve without configuration, by calling python waf resolve.
 * Minor: Added registry for the OptionsContext - this allows us to build git
@@ -21,15 +20,11 @@ Latest
 * Minor: Added git checkout resolver which will reuse previously checked out
   checkouts, and thereby making the configure step faster.
 * Patch: Fix dependency_node(..) function to work with unicode strings.
-* Major: Upgraded to virtualenv 16.4.3. The option --no-site-packages was
   deprecated and replaced with --system-site-packages. Which is now reflected
   in the API to create virtualenvs.
-* Major: Removed pip_local_download, pip_local_install, pip_install from the
   virtualenv implementation. Users might as well directly call run with the
   appropiate command.
-* Major: Prevent creation of virtualenv in build folder
 * Patch: Make the virtualenv clone shallow.
-* Major: Remove the explict dependency on virtualenv. Instead we will
   automatically download the virtualenv dependency.
 * Minor: Updated waf to 2.0.10.
 * Patch: Hide the output of the mklink command on Windows when calling the
@@ -38,7 +33,6 @@ Latest
 * Minor: Added capability to prevent git dependencies from pulling submodules.
 * Minor: Added Context dependency_node() function to return a waf node to a
   dependency. Making it easy to use Waf's ant_glob(...) function.
-* Major: Updated the create_virtualenv(...) function for virtual environments.
 * Minor: Added the clang_compilation_database tool.
 * Minor: Add symlink in source folder to the current build folder. The symlink
   called 'build_current' will point to Waf's build folder.
@@ -52,7 +46,6 @@ Latest
 * Minor: Added post_resolve.
 * Minor: Use a version of python-archive which preserves file permissions.
 * Minor: Added exceptions for accidental empty options.
-* Major: Full rewrite of our Waf dependency resolve code.
 * Minor: Support for new resolver options.
 * Minor: Adding support for resolve.json files.
 * Minor: Updated waf to 1.9.8.

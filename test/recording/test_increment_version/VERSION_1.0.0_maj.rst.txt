@@ -1,0 +1,17 @@
+News for rely
+=============
+
+This file lists the major changes between versions. For a more detailed list of
+every change, see the Git log.
+
+Latest
+------
+* tbd
+
+2.0.0
+-----
+* Major: Improve the titles in the benchmark plots
+
+1.0.0
+------
+* Major: Initial release
