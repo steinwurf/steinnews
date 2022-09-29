@@ -1,12 +1,11 @@
 from steinnews import write_next_version
-
+import pytest
 import pytest_datarecorder
 import os
 
 
 def test_increment_version(file_in, recording_file, datarecorder, tmpdir):
     file_out = tmpdir.join("output.rst")
-
     write_next_version(file_in, file_out)
 
     with open(file_out, "r") as file:
@@ -17,3 +16,9 @@ def test_increment_version(file_in, recording_file, datarecorder, tmpdir):
     if not os.path.exists(recording_dir):
         os.makedirs(recording_dir)
     datarecorder.record_data(data=output, recording_file=recording_file)
+
+
+def test_no_changes(no_changes_file_in):
+    test_path = "testpath123"
+    with pytest.raises(Exception):
+        write_next_version(no_changes_file_in, test_path)
