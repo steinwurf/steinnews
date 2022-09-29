@@ -10,7 +10,7 @@ Latest
 
 1.0.1
 -----
-* Patch: Improve the titles in the benchmark plots
+* Patch:      Improve the titles in the benchmark plots
 
 1.0.0
 ------
