@@ -9,21 +9,17 @@ jobs:
   waf:
     strategy:
       fail-fast: false
-      matrix:
-        os: [Windows, Linux]
-    runs-on: [self-hosted, "${{ matrix.os }}"]
-    name: ${{ matrix.os }} Waf
-    env:
-      python: python3
+    runs-on: [self-hosted, docker, builder]
+    name: Python Waf
+    container: 
+      image: ghcr.io/steinwurf/twine:latest
+      options: --user 0:0
     steps:
-      - name: Rename python3 to python on Windows
-        if: runner.os == 'Windows'
-        run: echo "python=python" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
       - name: Checkout
         uses: actions/checkout@v2
       - name: Configure
-        run: ${{ env.python }} waf configure
+        run: python3 waf configure
       - name: Build
-        run: ${{ env.python }} waf
+        run: python3 waf
       - name: Test
-        run: ${{ env.python }} waf --run_tests
+        run: python3 waf --run_tests
