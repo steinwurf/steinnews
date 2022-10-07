@@ -25,3 +25,6 @@ def cli(input_file, output_file, verbose):
         colorama.init()
         print(colorama.Fore.RED + str(e))
         sys.exit(1)
+
+if __name__ == '__main__':
+    cli()

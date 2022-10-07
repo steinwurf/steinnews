@@ -1,6 +1,7 @@
 import re
 from typing import Tuple, List
 import logging
+from steinnews.exceptions import NoChanges
 
 MAJOR = "* Major:"
 MINOR = "* Minor:"
@@ -147,7 +148,7 @@ def validate_content(latest_changes: List[Tuple], content: str):
         else None
     )
     if highest_level_seen is None:
-        raise Exception("No changes found in latest section")
+        raise NoChanges("No changes found in latest section")
 
     # The last two characters of the changes should be newlines, one for the last bullet point and one for the version header
     # If validation removed the last change, we got rid of the newline, so we need to add it back

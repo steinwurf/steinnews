@@ -1,8 +1,7 @@
-from steinnews import write_next_version
 import pytest
-import pytest_datarecorder
 import os
-
+from steinnews import write_next_version
+from steinnews.exceptions import NoChanges
 
 def test_increment_version(file_in, recording_file, datarecorder, tmpdir):
     file_out = tmpdir.join("output.rst")
@@ -20,5 +19,5 @@ def test_increment_version(file_in, recording_file, datarecorder, tmpdir):
 
 def test_no_changes(no_changes_file_in):
     test_path = "testpath123"
-    with pytest.raises(Exception):
+    with pytest.raises(NoChanges):
         write_next_version(no_changes_file_in, test_path)
