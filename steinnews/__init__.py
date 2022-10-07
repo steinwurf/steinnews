@@ -56,11 +56,11 @@ def write_next_version(file_in, file_out):
         file.write(output)
 
 
-def get_latest_tag(cotent):
+def get_latest_tag(content):
     version_result = re.findall(
-        r"(\d+)\.(\d+)\.(\d+)\n-+", cotent, flags=re.M
+        r"(\d+)\.(\d+)\.(\d+)\n-+", content, flags=re.M
     )
-    version = version_result[0] if version_result else ("0") * 3  # 0.0.0
+    version = version_result[0] if version_result else ("0", "0", "0")
     return version
     
 def generate_next_version(content):
