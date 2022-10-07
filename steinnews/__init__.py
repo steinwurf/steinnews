@@ -56,6 +56,13 @@ def write_next_version(file_in, file_out):
         file.write(output)
 
 
+def get_latest_tag(cotent):
+    version_result = re.findall(
+        r"(\d+)\.(\d+)\.(\d+)\n-+", cotent, flags=re.M
+    )
+    version = version_result[0] if version_result else ("0") * 3  # 0.0.0
+    return version
+    
 def generate_next_version(content):
     # Split the file on the first(most recent) version header
     sections_result = re.split(
@@ -67,11 +74,7 @@ def generate_next_version(content):
     )
 
     valid_content, highest_level_seen = validate_content(latest_changes, content)
-
-    old_version_result = re.findall(
-        r"(\d+)\.(\d+)\.(\d+)\n-+", valid_content, flags=re.M
-    )
-    old_version = old_version_result[0] if old_version_result else ("0") * 3
+    old_version = get_latest_tag(valid_content)
 
     # bump version
     version = {
@@ -130,7 +133,7 @@ def validate_content(latest_changes: List[Tuple], content: str):
         if change_level not in AVAILABLE_LEVELS:
             logging.warning(
                 "Invalid change level: %s with text:"
-                "%sList of available change levels {AVAILABLE_LEVELS}",
+                f"%sList of available change levels {AVAILABLE_LEVELS}",
                 change_level,
                 text,
             )
