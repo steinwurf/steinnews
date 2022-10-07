@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+1.3.0
+-----
+* Minor: Test for get_latest_tag method.
+
 1.2.0
 -----
 * Minor: Move getting the latest tag to a separate function.
