@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+1.2.0
+-----
+* Minor: Move getting the latest tag to a separate function.
+
 1.1.0
 -----
 * Minor: Now raising custom ```NoChanges``` exception when latest section is empty
