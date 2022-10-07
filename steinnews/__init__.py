@@ -45,7 +45,9 @@ CHANGE_PATTERN = rf"""
 
 
 # file_in and file_out may be the same
-def write_next_version(file_in, file_out):
+def write_next_version(file_in, file_out) -> str:
+    """Write the next version to the file and return the latest tag"""
+
     # Read in the file
     with open(file_in, "r") as file:
         content = file.read()
@@ -55,6 +57,7 @@ def write_next_version(file_in, file_out):
     with open(file_out, "w") as file:
         file.write(output)
 
+    return get_latest_tag(output)
 
 def get_latest_tag(content):
     version_result = re.findall(
