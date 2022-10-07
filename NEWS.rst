@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+1.1.0
+-----
+* Minor: Now raising custom ```NoChanges``` exception when latest section is empty
+
 1.0.0
 -----
 * Major: Tool has been created
