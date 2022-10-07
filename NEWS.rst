@@ -8,6 +8,10 @@ Latest
 ------
 * tbd
 
+1.4.0
+-----
+* Minor: ```Write_next_version``` now returns the new version number.
+
 1.3.0
 -----
 * Minor: Test for get_latest_tag method.
