@@ -6,6 +6,10 @@ every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+1.5.0
+-----
 * Minor: Added an extra validation step to handle cases where the user has forgotten to add ``*`` sign in front of the change level
 * Minor: Restructured the way tests are parametrised and added more tests
 * Patch: ``get_latest_tag()`` now returns ``String`` instead of ``Tuple``
