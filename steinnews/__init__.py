@@ -1,83 +1,79 @@
 import re
 from typing import Tuple, List
-import logging
-from steinnews.exceptions import NoChanges
-
-MAJOR = "* Major:"
-MINOR = "* Minor:"
-PATCH = "* Patch:"
-AVAILABLE_LEVELS = [MAJOR, MINOR, PATCH]
+from steinnews.exceptions import NoChanges, InvalidChanges
+from steinnews import patterns
 
 
-VERSION_PATTERN = r"""
-    \d+ # Digit (Major) positive number o fimes
-    \.  # literal .
-    \d+ # Digit (Minor version number)
-    \.  # literal .
-    \d+ # Digit (Patch version number)
-    \n  # newline
-    -+"""
+RstFile = str
+LatestCotent = str
 
-CHANGE_LEVEL = r"""
-    \*                  # Assert a literal *
-    [                   # Create a character class
-        \s                 # Assert a whitespace character
-        \w                 # Assert a word character
-    ]+                  # Close the character class and repeat it one or more times
-    :                   # Assert a literal :
-    """
 
-CHANGE_PATTERN = rf"""
-    ^                       # Assert start of string
-    (                       # Capture group 1
-        {CHANGE_LEVEL}          # Check the change level pattern
-    )                       # End of capture group 1
-
-    (                       # Capture group 2
-        [\s\S]*?                # Match any character 0 or more times, non-greedy - "Do not iterate any more than is absolutely necessary"
-        (?=                     # Positive lookahead
-            ^{CHANGE_LEVEL}          # Check the change level pattern
-            |                       # OR
-            \Z                      # Assert end of string
-        )                       # End of positive lookahead
-    )                       # End of capture group 2
-    """
+MAJOR_WORD = "Major"
+MINOR_WORD = "Minor"
+PATCH_WORD = "Patch"
+MAJOR = f"* {MAJOR_WORD}:"
+MINOR = f"* {MINOR_WORD}:"
+PATCH = f"* {PATCH_WORD}:"
+AVAILABLE_LEVELS = [MAJOR, MINOR, PATCH]  # order important
 
 
 # file_in and file_out may be the same
 def write_next_version(file_in, file_out) -> str:
     """Write the next version to the file and return the latest tag"""
 
-    # Read in the file
     with open(file_in, "r") as file:
         content = file.read()
+
     output = generate_next_version(content)
 
     # Write the file out again
     with open(file_out, "w") as file:
         file.write(output)
 
-    return get_latest_tag(output)
+    return ".".join(get_latest_tag(output))
 
-def get_latest_tag(content):
-    version_result = re.findall(
-        r"(\d+)\.(\d+)\.(\d+)\n-+", content, flags=re.M
-    )
+
+def get_latest_tag(content) -> Tuple[str, str, str]:
+    version_result = re.findall(patterns.VERSION, content, flags=re.M | re.VERBOSE)
     version = version_result[0] if version_result else ("0", "0", "0")
     return version
-    
-def generate_next_version(content):
+
+
+def generate_next_version(content: RstFile):
     # Split the file on the first(most recent) version header
     sections_result = re.split(
-        VERSION_PATTERN, content, flags=re.MULTILINE | re.VERBOSE
+        patterns.VERSION, content, flags=re.MULTILINE | re.VERBOSE
     )
     latest_section = sections_result[0]  # if sections_result else content
-    latest_changes: List[Tuple] = re.findall(
-        CHANGE_PATTERN, latest_section, re.VERBOSE | re.MULTILINE
+
+    # Raw text under the latest version header
+    raw_latest_content: LatestCotent = (
+        re.compile(patterns.LATEST_TEXT, flags=re.VERBOSE)
+        .search(latest_section)
+        .group(1)
     )
 
-    valid_content, highest_level_seen = validate_content(latest_changes, content)
-    old_version = get_latest_tag(valid_content)
+    validate_bullet_point_format(raw_latest_content)
+
+    # Transform raw text into a list of bullet points
+    latest_changes: List[Tuple] = re.findall(
+        patterns.CHANGE, raw_latest_content, re.VERBOSE | re.MULTILINE
+    )
+    # Validate that the bullet points are the same as raw text
+    latest_changes_str = changes_to_str(latest_changes)
+    if latest_changes_str == "":
+        raise NoChanges("No changes found in latest section")
+
+    if latest_changes_str != raw_latest_content:
+        res = raw_latest_content.replace(latest_changes_str, "").rstrip("\n")
+        res = res.split("\n")
+        raise InvalidChanges(res)
+
+    valid_content, highest_level_seen = validate_changes(latest_changes)
+    assert len(changes_to_str(valid_content)) == len(
+        raw_latest_content
+    ), "Latest changes are not valid"
+    old_version = get_latest_tag(content)
 
     # bump version
     version = {
@@ -85,8 +81,6 @@ def generate_next_version(content):
         MINOR: old_version[1],
         PATCH: old_version[2],
     }
-    logging.debug(f"Old version: {version}")
-
     found = False
     for key in AVAILABLE_LEVELS:
         if found:
@@ -95,54 +89,39 @@ def generate_next_version(content):
         if key == highest_level_seen:
             version[key] = str(int(version[key]) + 1)
             found = True
-
     new_version_str = version[MAJOR] + "." + version[MINOR] + "." + version[PATCH]
-    logging.debug("New version: %s", new_version_str)
-    # Replace in the target text to write new version
 
     new_version_underscores = "-" * len(new_version_str)
 
-    # Replace in the target text to write new version
+    # Using re.VERBOSE with re.sub requires workarounds hence not exported in variables
+    # Get the latest section, replace it with itself and the new version
     res = re.sub(
-        r"(Latest\n-+\n)",
+        rf"({patterns.LATEST})",
         r"\1* tbd\n\n" + new_version_str + "\n" + new_version_underscores + "\n",
-        valid_content,
+        content,
         flags=re.M,
     )
     return res
 
 
-def validate_content(latest_changes: List[Tuple], content: str):
-    """
-    1. Filter latest changes are in the correct format
-    2. Replace the orignal changes with the filtered ones in content
-    3. Return the content and the highest level seen
-    """
-
-    def changes_to_str(changes: List[Tuple[str, str]]) -> str:
-        changes_string = ""
-        for change_level, text in changes:
-            changes_string += change_level + text
-        return changes_string
-
+def validate_changes(latest_changes: List[Tuple]) -> Tuple[List[tuple], str]:
     seen_level_dict = {
         MAJOR: False,
         MINOR: False,
         PATCH: False,
     }
     valid_changes: List[Tuple] = []
+    invalid_changes: List[Tuple] = []
 
     for change_level, text in latest_changes:
         if change_level not in AVAILABLE_LEVELS:
-            logging.warning(
-                "Invalid change level: %s with text:"
-                f"%sList of available change levels {AVAILABLE_LEVELS}",
-                change_level,
-                text,
-            )
+            invalid_changes.append((change_level + text))
         else:
             seen_level_dict[change_level] = True
             valid_changes.append((change_level, text))
+
+    if invalid_changes:
+        raise InvalidChanges(invalid_changes)
 
     highest_level_seen = (
         MAJOR
@@ -156,17 +135,26 @@ def validate_content(latest_changes: List[Tuple], content: str):
     if highest_level_seen is None:
         raise NoChanges("No changes found in latest section")
 
-    # The last two characters of the changes should be newlines, one for the last bullet point and one for the version header
-    # If validation removed the last change, we got rid of the newline, so we need to add it back
-    valid_changes_str = changes_to_str(valid_changes)
-    if valid_changes_str[-2] != "\n":
-        valid_changes_str += "\n"
+    return valid_changes, highest_level_seen
 
-    changes_str = changes_to_str(latest_changes)
-    valid_content = re.sub(re.escape(changes_str), valid_changes_str, content)
 
-    logging.debug("########Old list of changes#########\n%s", changes_str)
-    logging.debug("########New list of changes#########\n%s", valid_changes_str)
-    logging.debug("########Validated content#########\n%s", valid_content)
+def changes_to_str(changes: List[Tuple[str, str]]) -> str:
+    changes_string = ""
+    for change_level, text in changes:
+        changes_string += change_level + text
+    return changes_string
 
-    return valid_content, highest_level_seen
+
+def validate_bullet_point_format(raw_latest_content: str):
+    """Make sure that the latest section does not have any line starting from any of the available levels while not being a bullet point"""
+    lines = raw_latest_content.split("\n")
+    invalid_lines = []
+    for line in lines:
+        if any(
+            line.lstrip().startswith(word)
+            for word in [MAJOR_WORD, MINOR_WORD, PATCH_WORD]
+        ):
+            invalid_lines.append(line)
+
+    if invalid_lines:
+        raise InvalidChanges(invalid_lines)

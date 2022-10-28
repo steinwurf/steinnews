@@ -6,7 +6,9 @@ every change, see the Git log.
 
 Latest
 ------
-* tbd
+* Minor: Added an extra validation step to handle cases where the user has forgotten to add ``*`` sign in front of the change level
+* Minor: Restructured the way tests are parametrised and added more tests
+* Patch: ``get_latest_tag()`` now returns ``String`` instead of ``Tuple``
 
 1.4.0
 -----
@@ -22,7 +24,7 @@ Latest
 
 1.1.0
 -----
-* Minor: Now raising custom ```NoChanges``` exception when latest section is empty
+* Minor: Now raising custom ``NoChanges`` exception when latest section is empty
 
 1.0.0
 -----

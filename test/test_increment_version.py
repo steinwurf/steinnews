@@ -1,9 +1,10 @@
 import pytest
 import os
 from steinnews import write_next_version
-from steinnews.exceptions import NoChanges
+from steinnews.exceptions import InvalidChanges, NoChanges
 
-def test_increment_version(file_in, recording_file, datarecorder, tmpdir):
+
+def test_valid(file_in, recording_file, datarecorder, tmpdir):
     file_out = tmpdir.join("output.rst")
     write_next_version(file_in, file_out)
 
@@ -17,7 +18,19 @@ def test_increment_version(file_in, recording_file, datarecorder, tmpdir):
     datarecorder.record_data(data=output, recording_file=recording_file)
 
 
-def test_no_changes(no_changes_file_in):
-    test_path = "testpath123"
+def test_invalid(file_in, invalid_changes_file):
+    invalid_changes = open(invalid_changes_file, "r").readlines()
+    with pytest.raises(InvalidChanges) as excinfo:
+        write_next_version(file_in, "testpath123")
+
+    import logging
+
+    logging.warning(excinfo.value)
+    for line in invalid_changes:
+        logging.warning(line)
+    assert all(change.rstrip() in str(excinfo.value) for change in invalid_changes)
+
+
+def test_no_changes(file_in):
     with pytest.raises(NoChanges):
-        write_next_version(no_changes_file_in, test_path)
+        write_next_version(file_in, "testpath123")

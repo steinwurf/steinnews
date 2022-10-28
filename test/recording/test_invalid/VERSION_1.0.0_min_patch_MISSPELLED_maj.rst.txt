@@ -1,0 +1,1 @@
+* Majjor: Improve the titles in the benchmark plots

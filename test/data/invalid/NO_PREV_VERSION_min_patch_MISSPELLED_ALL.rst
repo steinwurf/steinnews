@@ -6,10 +6,6 @@ every change, see the Git log.
 
 Latest
 ------
-* tbd
-
-0.1.0
------
-* Minor: Some minor change in place
-* Patch: Improve the titles in the benchmark plots
-
+ Minor: Some minor change in place
+ Patch: Improve the titles in the benchmark plots
+ Majjor: Improve the titles in the benchmark plots
