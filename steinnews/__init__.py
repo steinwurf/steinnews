@@ -24,7 +24,7 @@ def write_next_version(file_in, file_out) -> str:
     with open(file_in, "r") as file:
         content = file.read()
 
-    output = generate_next_version(content)
+    output = generate_next_version(content)[0]
 
     # Write the file out again
     with open(file_out, "w") as file:
@@ -40,25 +40,8 @@ def get_latest_tag(content) -> Tuple[str, str, str]:
 
 
 def generate_next_version(content: RstFile):
-    # Split the file on the first(most recent) version header
-    sections_result = re.split(
-        patterns.VERSION, content, flags=re.MULTILINE | re.VERBOSE
-    )
-    latest_section = sections_result[0]  # if sections_result else content
 
-    # Raw text under the latest version header
-    raw_latest_content: LatestCotent = (
-        re.compile(patterns.LATEST_TEXT, flags=re.VERBOSE)
-        .search(latest_section)
-        .group(1)
-    )
-
-    validate_bullet_point_format(raw_latest_content)
-
-    # Transform raw text into a list of bullet points
-    latest_changes: List[Tuple] = re.findall(
-        patterns.CHANGE, raw_latest_content, re.VERBOSE | re.MULTILINE
-    )
+    latest_changes = get_latest_changes(content)
     # Validate that the bullet points are the same as raw text
     latest_changes_str = changes_to_str(latest_changes)
     if latest_changes_str == "":
@@ -102,6 +85,30 @@ def generate_next_version(content: RstFile):
         flags=re.M,
     )
     return res
+
+
+def get_latest_changes(content: RstFile):
+    # Split the file on the first(most recent) version header
+    sections_result = re.split(
+        patterns.VERSION, content, flags=re.MULTILINE | re.VERBOSE
+    )
+    latest_section = sections_result[0]  # if sections_result else content
+
+    # Raw text under the latest version header
+    raw_latest_content: LatestCotent = (
+        re.compile(patterns.LATEST_TEXT, flags=re.VERBOSE)
+        .search(latest_section)
+        .group(1)
+    )
+
+    validate_bullet_point_format(raw_latest_content)
+
+    # Transform raw text into a list of bullet points
+    latest_changes: List[Tuple] = re.findall(
+        patterns.CHANGE, raw_latest_content, re.VERBOSE | re.MULTILINE
+    )
+
+    return latest_changes
 
 
 def validate_changes(latest_changes: List[Tuple]) -> Tuple[List[tuple], str]:
