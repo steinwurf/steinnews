@@ -24,7 +24,7 @@ def write_next_version(file_in, file_out) -> str:
     with open(file_in, "r") as file:
         content = file.read()
 
-    output = generate_next_version(content)[0]
+    output = generate_next_version(content)
 
     # Write the file out again
     with open(file_out, "w") as file:
