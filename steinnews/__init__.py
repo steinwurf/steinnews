@@ -41,7 +41,7 @@ def get_latest_tag(content) -> Tuple[str, str, str]:
 
 def generate_next_version(content: RstFile):
 
-    latest_changes = get_latest_changes(content)
+    latest_changes, raw_latest_content = get_latest_changes(content)
     # Validate that the bullet points are the same as raw text
     latest_changes_str = changes_to_str(latest_changes)
     if latest_changes_str == "":
@@ -108,7 +108,7 @@ def get_latest_changes(content: RstFile):
         patterns.CHANGE, raw_latest_content, re.VERBOSE | re.MULTILINE
     )
 
-    return latest_changes
+    return latest_changes, raw_latest_content
 
 
 def validate_changes(latest_changes: List[Tuple]) -> Tuple[List[tuple], str]:
