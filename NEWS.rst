@@ -6,6 +6,10 @@ every change, see the Git log.
 
 Latest
 ------
+* tbd
+
+1.6.0
+-----
 * Minor: Added helper to get only the latest text from NEWS.rst content
 
 1.5.0
