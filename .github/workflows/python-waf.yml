@@ -1,29 +1,32 @@
 name: Waf Python Tests
-on:
+'on':
   workflow_dispatch:
-  schedule:
-    - cron: "0 1 * * *" # 3 AM CET
+    inputs:
+      extra_resolve_options:
+        description: Extra Resolve Options
+        required: false
   push:
+    branches:
+    - master
   pull_request:
 jobs:
   waf:
     strategy:
       fail-fast: false
-    runs-on: [self-hosted, docker, builder]
+    runs-on:
+    - self-hosted
+    - docker
+    - builder
     name: Python Waf
-    container: 
+    container:
       image: ghcr.io/steinwurf/twine:latest
       options: --user 0:0
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Configure
-        run: python3 waf configure
-      - name: Build
-        run: python3 waf
-      - name: Test
-        run: python3 waf --run_tests
-
-
-
-
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Configure
+      run: python3 waf configure
+    - name: Build
+      run: python3 waf
+    - name: Test
+      run: python3 waf --run_tests
